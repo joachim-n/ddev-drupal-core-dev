@@ -3,13 +3,12 @@
 
 namespace DrupalCoreDev\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-class LintCspellCommand extends Command {
+class LintCspellCommand extends CommandBase {
     /**
      * {@inheritdoc}
      */
@@ -23,10 +22,11 @@ class LintCspellCommand extends Command {
      * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output): int {
+        $doc_root = $this->getWebRoot() . '/';
         $modified_only = $input->getOption('modified-only');
-        $command = "cd core && yarn run spellcheck:core --no-must-find-files";
+        $command = "cd {$doc_root}core && yarn run spellcheck:core --no-must-find-files";
         if ($modified_only) {
-            $command = "cd core && git diff --name-only | sed \"s_^_../_\" | yarn run spellcheck:core --no-must-find-files --file-list stdin";
+            $command = "cd {$doc_root}core && git diff --name-only | sed \"s_^_../_\" | yarn run spellcheck:core --no-must-find-files --file-list stdin";
         }
         $phpcs = Process::fromShellCommandline($command);
         $output->writeln($command);
