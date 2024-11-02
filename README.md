@@ -4,46 +4,47 @@ This is a DDEV addon for doing Drupal core development.
 
 We're in #ddev-for-core-dev on [Drupal Slack](https://www.drupal.org/community/contributor-guide/reference-information/talk/tools/slack) (but please try and keep work and feature requests in Issues where it's visible to all 🙏)
 
-`ddev drush` is fully supported, along with using or testing MariaDB, MySQL, and PostgreSQL databases (and Sqlite3)
+## Installation
 
+The recommended way to set up Drupal core for development is with the Composer
+project template `joachim-n/drupal-core-development-project`. This addon can
+also be used with Drupal installed directly on a git clone of core.
 
 ```
+# 1A: Install with Composer project template (recommended)
+# If you already installed a project using the template following the
+# instructions in its README then skip to step 2.
+ddev config --project-type=drupal --php-version=8.3
+ddev start
+ddev composer create joachim-n/drupal-core-development-project
+ddev config --update
+ddev restart
+
+# 1B: Install directly on a git clone
 git clone https://git.drupalcode.org/project/drupal.git drupal
 cd drupal
-ddev config --project-type=drupal
-ddev get justafish/ddev-drupal-core-dev
-ddev restart
-ddev composer install
-ddev config --update
-
-
-# Install drupal
-ddev drush si -y --account-pass==admin
-
-# Run PHPUnit tests
-ddev phpunit core/modules/sdc
-
-# Run Nightwatch tests (currently only runs on Chrome)
-ddev nightwatch --tag core
-```
-
-## Using various database types
-
-By default, the DDEV default database type is used (MariaDB).
-
-To use another supported database type,
-`ddev delete -Oy` and `ddev config --database=mysql:8.0` or `ddev config --database=postgres:16` for example.
-
-To use Sqlite,
-```
-ddev stop
-ddev config --disable-settings-management --omit-containers=db
-rm -rf web/sites/default/settings*.php web/sites/default/files
+ddev config --disable-settings-management
 ddev start
-ddev drupal install
+ddev composer install
+
+# 2. Install this add-on
+ddev add-on get justafish/ddev-drupal-core-dev
+ddev restart
+
+# 3. Install drupal
+ddev drush si -y --account-pass==admin
 ```
 
-## Nightwatch Examples
+## Running tests
+
+### PHPUnit tests
+
+```
+# Run PHPUnit tests
+ddev phpunit web/core/modules/sdc
+```
+
+### Nightwatch tests
 
 You can watch Nightwatch running in real time at https://drupal.ddev.site:7900
 for Chrome and https://drupal.ddev.site:7901 for Firefox. The password is
@@ -89,7 +90,7 @@ a11y test for a custom admin theme
 ddev nightwatch --tag a11y:admin --adminTheme seven
 ```
 
-## Core Linting
+### Core Linting
 
 This will run static tests against core standards.
 
