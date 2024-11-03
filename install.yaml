@@ -10,6 +10,13 @@ project_files:
   - commands/web/drupal
   - commands/web/phpunit
   - commands/web/nightwatch
+  - commands/web/install
+  - commands/web/code-check
+  - commands/web/cspell-check
+  - commands/web/phpcbf
+  - commands/web/phpcs
+  - commands/web/phpstan
+  - commands/web/tests-cleanup
   - core-dev/gitignore
   - core-dev/.env
   - core-dev/src/Command/AdminLoginCommand.php
@@ -26,20 +33,21 @@ project_files:
   - core-dev/src/Command/LintCommand.php
 
 post_install_actions:
-  - cp core-dev/phpunit-chrome.xml ../phpunit.xml
+  - cp ../repos/drupal/core/phpunit.xml.dist ../phpunit.xml
   - perl -pi -e "s|DRUPAL_CORE_DDEV_URL|$DDEV_PRIMARY_URL|g" ../phpunit.xml
   - perl -pi -e "'$DDEV_DOCROOT' and s|DDEV_DOCROOT|$DDEV_DOCROOT/|g" ../phpunit.xml
   - cp core-dev/.env ../.env
   - cp core-dev/gitignore ../.gitignore
   - mkdir -p ../test_output
-  - chmod +w ../test_output
-  - cd ../web/core && ddev yarn
+  - chmod -R 777 ../test_output
+  # - cd ../web/core && ddev yarn
 
 removal_actions:
   - |
-    for item in ../core/phpunit.xml ../core/.env ../.gitignore; do
+    for item in ../phpunit.xml ../.env ../.gitignore; do
       if grep '#ddev-generated' ${item} >/dev/null; then
         rm -f ${item}
       fi
     done
+  - echo removing test_output directory
   - rm -rf ../test_output

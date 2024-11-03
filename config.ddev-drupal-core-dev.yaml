@@ -8,3 +8,14 @@ upload_dirs:
 # but with DDEV + mutagen that isn't possible.
 # so just redirect the upload_dirs.
     - .ddev/tmp
+web_environment:
+    - BROWSERTEST_OUTPUT_DIRECTORY=/var/www/html/test_output
+    - BROWSERTEST_OUTPUT_BASE_URL=${DDEV_PRIMARY_URL}
+    - SIMPLETEST_BASE_URL=${DDEV_PRIMARY_URL}
+    - SIMPLETEST_DB=mysql://root:root@db/phpunit
+corepack_enable: true
+nodejs_version: "20"
+hooks:
+    post-start:
+        - exec: mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS phpunit; GRANT ALL ON phpunit.* to 'db'@'%';"
+          service: db
