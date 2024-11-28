@@ -28,9 +28,23 @@ project_files:
 
 post_install_actions:
   - cp core-dev/phpunit-chrome.xml ../phpunit.xml
+  - cp core-dev/.env ../.env
   - perl -pi -e "s|DRUPAL_CORE_DDEV_URL|$DDEV_PRIMARY_URL|g" ../phpunit.xml
   - perl -pi -e "'$DDEV_DOCROOT' and s|DDEV_DOCROOT|$DDEV_DOCROOT/|g" ../phpunit.xml
-  - cp core-dev/.env ../.env
+  # Set the DB URL in phpunit.xml based on which database type DDEV is using.
+  - |
+    case ${DDEV_DATABASE_FAMILY:-} in
+      mysql)
+        # the backslash here is to prevent perl from eating the @
+        dburl='mysql://db:db\@db/db'
+        ;;
+      postgres)
+        dburl='pgsql://db:db\@db/db'
+        ;;
+    esac
+    perl -pi -e "s|SIMPLETEST_DB_VALUE|${dburl}|g" ../phpunit.xml
+    perl -pi -e "s|DRUPAL_TEST_DB_URL_VALUE|${dburl}|g" core/.env
+
   - cp core-dev/gitignore ../.gitignore
   - mkdir -p ../test_output
   - chmod +w ../test_output
