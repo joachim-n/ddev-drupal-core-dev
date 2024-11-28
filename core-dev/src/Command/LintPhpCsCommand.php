@@ -20,7 +20,8 @@ class LintPhpCsCommand extends CommandBase {
      * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output): int {
-        $command = "composer phpcs -- --report-full --report-summary";
+        // Command taken from core's composer.json.
+        $command = "phpcs --standard=core/phpcs.xml.dist --parallel=\"$( (nproc || sysctl -n hw.logicalcpu || echo 4) 2>/dev/null)\" -- --report-full --report-summary";
         $phpcs = Process::fromShellCommandline($command);
         $output->writeln($command);
         $phpcs->setTimeout(0);
