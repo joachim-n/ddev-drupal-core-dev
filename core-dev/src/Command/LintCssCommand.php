@@ -32,7 +32,7 @@ class LintCssCommand extends CommandBase {
             return 1;
         }
 
-        $command = "cd core && yarn run lint:css --color --custom-formatter=node_modules/stylelint-formatter-gitlab";
+        $command = "cd {$doc_root}core && yarn run lint:css --color --custom-formatter=node_modules/stylelint-formatter-gitlab";
         $phpcs = Process::fromShellCommandline($command);
         $output->writeln($command);
         $phpcs->setTimeout(0);
