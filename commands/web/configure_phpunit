@@ -1,12 +1,53 @@
 #!/usr/bin/env php
-
+<?php
 #ddev-generated
 
-<?php
+# internal
+# experimenting with editing the phpunit.xml file as xml rather than
+# using token replacement.
+# this means we can edit what's in place rather than always copying a template.
+
+$composer_root = getenv('DDEV_COMPOSER_ROOT');
+$doc_root = getenv('DDEV_DOCROOT');
+$loader = require_once $composer_root . '/' . $doc_root . '/autoload.php';
+
+$options = getopt('', [
+  'database:',
+  'browser:',
+]);
+
+// dump($options);
 
 $doc = new \DOMDocument();
 $doc->load('phpunit.xml');
+$save = FALSE;
 
-# cp .ddev/core-dev/phpunit-chrome.xml phpunit.xml
-# perl -pi -e "s|DRUPAL_CORE_DDEV_URL|$DDEV_PRIMARY_URL|g" phpunit.xml
-# perl -pi -e "'$DDEV_DOCROOT' and s|DDEV_DOCROOT|$DDEV_DOCROOT/|g" phpunit.xml
+if (isset($options['database'])) {
+  $db_url = match ($options['database']) {
+    'sqlite'    => 'sqlite://localhost/sites/default/files/db.sqlite',
+    'mysql'     => 'mysql://db:db@db/db',
+    'postgres'  => 'pgsql://db:db@db/db',
+  };
+
+  // Set the value of this node:
+  // <env name="SIMPLETEST_DB" value="SIMPLETEST_DB_VALUE"/>
+  $xpath = new \DOMXpath($doc);
+  $node_list = $xpath->query("//phpunit/php/env[@name='SIMPLETEST_DB']");
+  if (empty($node_list)) {
+    throw new \Exception("Unable to find SIMPLETEST_DB env node.");
+  }
+
+  $node = $node_list[0];
+  $node->setAttribute('value', $db_url);
+
+  $save = TRUE;
+}
+
+if (isset($options['browser'])) {
+
+
+}
+
+if ($save) {
+  $doc->save('phpunit.xml');
+}
