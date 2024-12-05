@@ -1,0 +1,6 @@
+<!--
+# cspell:ignore ddev
+#ddev-generated
+-->
+        <env name="MINK_DRIVER_ARGS" value='["chrome", {"browserName":"chrome", "goog:chromeOptions":{"args":["--no-sandbox","--ignore-certificate-errors", "--allow-insecure-localhost"]}}, "http://chrome:4444"]'/>
+        <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["chrome", {"browserName":"chrome", "goog:chromeOptions":{"args":["--no-sandbox","--ignore-certificate-errors", "--allow-insecure-localhost"]}}, "http://chrome:4444"]'/>

@@ -1,0 +1,6 @@
+<!--
+# cspell:ignore ddev
+#ddev-generated
+-->
+        <env name="MINK_DRIVER_ARGS" value='["firefox", {"browserName":"firefox", "moz:firefoxOptions":{"args":[]}}, "http://firefox:4444"]'/>
+        <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["firefox", {"browserName":"firefox", "moz:firefoxOptions":{"args":[]}}, "http://firefox:4444"]'/>

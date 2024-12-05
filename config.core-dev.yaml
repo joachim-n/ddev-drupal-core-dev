@@ -7,7 +7,7 @@ hooks:
   post-start:
   - exec: |
       dburl='sqlite://localhost/sites/default/files/db.sqlite'
-      cp .ddev/core-dev/phpunit-chrome.xml core/phpunit.xml
+      cp .ddev/core-dev/phpunit.xml core/phpunit.xml
       cp .ddev/core-dev/.env core/.env
       if ping -c 1 db >/dev/null 2>&1; then
         case ${DDEV_DATABASE_FAMILY:-} in

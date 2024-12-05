@@ -45,46 +45,9 @@ if (isset($options['database'])) {
 
 if (isset($options['browser'])) {
   // Copy the values from this XML extract into the matching elements.
-  $browser_xml = match($options['browser']) {
-    'chrome' => <<<EOXML
-      <php>
-        <env name="MINK_DRIVER_ARGS" value='["chrome", {"browserName":"chrome", "goog:chromeOptions":{"args":["--no-sandbox","--ignore-certificate-errors", "--allow-insecure-localhost"]}}, "http://chrome:4444"]'/>
-        <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["chrome", {"browserName":"chrome", "goog:chromeOptions":{"args":["--no-sandbox","--ignore-certificate-errors", "--allow-insecure-localhost"]}}, "http://chrome:4444"]'/>
-      </php>
-      EOXML,
-    'firefox' => <<<EOXML
-      <php>
-        <env name="MINK_DRIVER_ARGS" value='["firefox", {"browserName":"firefox", "moz:firefoxOptions":{"args":[]}}, "http://firefox:4444"]'/>
-        <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["firefox", {"browserName":"firefox", "moz:firefoxOptions":{"args":[]}}, "http://firefox:4444"]'/>
-      </php>
-      EOXML,
-  };
+  $browser_xml_snippet_file = "core-dev/phpunit-snippet-{$options['browser']}.xml";
+  $browser_xml_snippet = file_get_contents($browser_xml_snippet_file);
 
-  $insert = new \DOMDocument();
-  $insert->loadXML($browser_xml);
-  $xpath = new \DOMXpath($insert);
-  $node_list = $xpath->query("//php/env");
-  foreach ($node_list as $insert_env_node) {
-    $env_name = $insert_env_node->getAttribute('name');
-
-    $xpath = new \DOMXpath($doc);
-    $node_list = $xpath->query("//phpunit/php/env[@name='{$env_name}']");
-    if (empty($node_list)) {
-      throw new \Exception("Unable to find '{$env_name}' env node.");
-    }
-
-    dump($insert_env_node->getAttribute('value'));
-
-
-    $node = $node_list[0];
-    $node->setAttribute('value', urldecode($insert_env_node->getAttribute('value')));
-    # AAAARGH QUOTESS!
-    # $node->setAttribute('value', '"aaaargh," he said');
-
-    # $imported = $doc->importNode($insert_env_node);
-    # $node->appendChild($imported);
-
-  }
 
   $save = TRUE;
 }
