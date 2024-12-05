@@ -46,10 +46,12 @@ if (isset($options['browser'])) {
   $browser_xml_snippet = file_get_contents($browser_xml_snippet_file);
 
   // Trim out the XML comment.
+  // Yes we're hacking XML with regexes, but doing it with DOMDocument doens't
+  // work because of the '"' characters in the values, which get escaped and
+  // would require regex hacking anyway.
   $browser_xml_snippet = preg_replace("/<!--.*-->\n/s", '', $browser_xml_snippet);
 
   $phpunit_file = file_get_contents('phpunit.xml');
-  dump($phpunit_file);
   $phpunit_file = preg_replace("/(?<=<!-- MINK_DRIVER_INSERT_START -->\n).+\n(?=\s+<!-- MINK_DRIVER_INSERT_END -->)/ms", $browser_xml_snippet, $phpunit_file);
   file_put_contents('phpunit.xml', $phpunit_file);
 }
