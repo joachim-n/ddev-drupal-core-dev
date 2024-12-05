@@ -7,19 +7,31 @@
 # using token replacement.
 # this means we can edit what's in place rather than always copying a template.
 
-$composer_root = getenv('DDEV_COMPOSER_ROOT');
-$doc_root = getenv('DDEV_DOCROOT');
-$loader = require_once $composer_root . '/' . $doc_root . '/autoload.php';
+// $composer_root = getenv('DDEV_COMPOSER_ROOT');
+// $doc_root = getenv('DDEV_DOCROOT');
+// $loader = require_once $composer_root . '/' . $doc_root . '/autoload.php';
 
 $options = getopt('', [
+  // The database to configure.
   'database:',
+  // The browser to configure.
   'browser:',
+  // The base URL.
+  'url:',
+  // Whether this is being run in the context of the .ddev folder. If omitted,
+  // this is assumed to be in the project root.
+  'ddev',
 ]);
 
-if (isset($options['database'])) {
-  $doc = new \DOMDocument();
-  $doc->load('phpunit.xml');
+if (isset($options['ddev'])) {
+  chdir('..');
+}
 
+$doc = new \DOMDocument();
+$doc->load('phpunit.xml');
+
+// Configure the database.
+if (isset($options['database'])) {
   $db_url = match ($options['database']) {
     'sqlite'    => 'sqlite://localhost/sites/default/files/db.sqlite',
     'mysql'     => 'mysql://db:db@db/db',
@@ -40,6 +52,24 @@ if (isset($options['database'])) {
   $doc->save('phpunit.xml');
 }
 
+// Configure the site URL.
+if (isset($options['url'])) {
+  // Set the value of this node:
+  // <env name="SIMPLETEST_BASE_URL" value="DRUPAL_CORE_DDEV_URL"/>
+
+  $xpath = new \DOMXpath($doc);
+  $node_list = $xpath->query("//phpunit/php/env[@name='SIMPLETEST_BASE_URL']");
+  if (empty($node_list)) {
+    throw new \Exception("Unable to find SIMPLETEST_BASE_URL env node.");
+  }
+
+  $node = $node_list[0];
+  $node->setAttribute('value', $options['url']);
+
+  $doc->save('phpunit.xml');
+}
+
+// Configure the Mink browser options.
 if (isset($options['browser'])) {
   // Copy the values from this XML extract into the matching elements.
   $browser_xml_snippet_file = ".ddev/core-dev/phpunit-snippet-{$options['browser']}.xml";

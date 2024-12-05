@@ -32,6 +32,7 @@ project_files:
 
 post_install_actions:
   - cp core-dev/phpunit.xml ../phpunit.xml
+  - php commands/web/configure_phpunit --browser=chrome --database=$DDEV_DATABASE_FAMILY --url=$DDEV_PRIMARY_URL --ddev
   - cp core-dev/.env ../.env
   - cp core-dev/gitignore ../.gitignore
   - mkdir -p ../test_output
