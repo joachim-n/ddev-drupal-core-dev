@@ -10,9 +10,9 @@ hooks:
       if ping -c 1 db >/dev/null 2>&1; then
         db_type=${DDEV_DATABASE_FAMILY}
       fi
-      configure_phpunit --database=${db_type}
+      ddev configure_phpunit --database=${db_type}
       cp .ddev/core-dev/.env core/.env
-      perl -pi -e "s|DRUPAL_TEST_DB_URL_VALUE|${dburl}|g" core/.env
+      # perl -pi -e "s|DRUPAL_TEST_DB_URL_VALUE|${dburl}|g" core/.env
 
 upload_dirs:
   # The install technique tries to remove all of sites/default/files
