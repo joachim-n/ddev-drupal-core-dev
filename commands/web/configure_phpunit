@@ -16,13 +16,10 @@ $options = getopt('', [
   'browser:',
 ]);
 
-// dump($options);
-
-$doc = new \DOMDocument();
-$doc->load('phpunit.xml');
-$save = FALSE;
-
 if (isset($options['database'])) {
+  $doc = new \DOMDocument();
+  $doc->load('phpunit.xml');
+
   $db_url = match ($options['database']) {
     'sqlite'    => 'sqlite://localhost/sites/default/files/db.sqlite',
     'mysql'     => 'mysql://db:db@db/db',
@@ -40,18 +37,20 @@ if (isset($options['database'])) {
   $node = $node_list[0];
   $node->setAttribute('value', $db_url);
 
-  $save = TRUE;
+  $doc->save('phpunit.xml');
 }
 
 if (isset($options['browser'])) {
   // Copy the values from this XML extract into the matching elements.
-  $browser_xml_snippet_file = "core-dev/phpunit-snippet-{$options['browser']}.xml";
+  $browser_xml_snippet_file = ".ddev/core-dev/phpunit-snippet-{$options['browser']}.xml";
   $browser_xml_snippet = file_get_contents($browser_xml_snippet_file);
 
+  // Trim out the XML comment.
+  $browser_xml_snippet = preg_replace("/<!--.*-->\n/s", '', $browser_xml_snippet);
 
-  $save = TRUE;
+  $phpunit_file = file_get_contents('phpunit.xml');
+  dump($phpunit_file);
+  $phpunit_file = preg_replace("/(?<=<!-- MINK_DRIVER_INSERT_START -->\n).+\n(?=\s+<!-- MINK_DRIVER_INSERT_END -->)/ms", $browser_xml_snippet, $phpunit_file);
+  file_put_contents('phpunit.xml', $phpunit_file);
 }
 
-if ($save) {
-  $doc->save('phpunit.xml');
-}
