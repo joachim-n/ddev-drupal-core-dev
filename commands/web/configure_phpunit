@@ -7,6 +7,19 @@
 # using token replacement.
 # this means we can edit what's in place rather than always copying a template.
 
+
+/*
+argh this needs to do the .env file too
+so it's a general config file setup-er.
+
+and it needs to run on BOTH install AND startup.
+
+
+
+
+
+*/
+
 // $composer_root = getenv('DDEV_COMPOSER_ROOT');
 // $doc_root = getenv('DDEV_DOCROOT');
 // $loader = require_once $composer_root . '/' . $doc_root . '/autoload.php';
