@@ -8,10 +8,11 @@ hooks:
   - exec: |
       db_type='sqlite'
       if ping -c 1 db >/dev/null 2>&1; then
-        db_type=${DDEV_DATABASE_FAMILY}
+          db_type=${DDEV_DATABASE_FAMILY}
       fi
-      php .ddev/commands/web/configure_phpunit --database=${db_type}
-      cp .ddev/core-dev/.env core/.env
+      ddev configure_phpunit --database=${db_type}
+      # cp .ddev/core-dev/.env core/.env
+      # # ARRRGH FUCKSTICKS WE NEED THE URL HERE TOO.
       # perl -pi -e "s|DRUPAL_TEST_DB_URL_VALUE|${dburl}|g" core/.env
 
 upload_dirs:
