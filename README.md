@@ -14,11 +14,10 @@ also be used with Drupal installed directly on a git clone of core.
 # 1A: Install with Composer project template (recommended)
 # If you already installed a project using the template following the
 # instructions in its README then skip to step 2.
-ddev config --project-type=drupal --php-version=8.3
+ddev config --project-type=drupal12 --docroot=web
 ddev start
-ddev composer create joachim-n/drupal-core-development-project
-ddev config --update
-ddev restart
+ddev composer create-project joachim-n/drupal-core-development-project
+ddev composer require drush/drush
 
 # 1B: Install directly on a git clone
 git clone https://git.drupalcode.org/project/drupal.git drupal
@@ -28,7 +27,7 @@ ddev start
 ddev composer install
 
 # 2. Install this add-on
-ddev add-on get justafish/ddev-drupal-core-dev
+ddev add-on get joachim-n/ddev-drupal-core-dev
 
 # 3. Install drupal
 ddev drush si -y --account-pass==admin
